@@ -13,7 +13,7 @@ class Habit extends Component {
   };
   minusCount = () => {
     console.log("count : -1");
-    if (this.state.count < 1) {
+    if (this.state.count <= 0) {
       return;
     }
     this.setState({ count: this.state.count - 1 });
@@ -23,19 +23,21 @@ class Habit extends Component {
   };
   render() {
     return (
-      <div className="habit">
-        <span className="habit-title">Reading</span>
-        <span className="habit-count">{this.state.count}</span>
-        <button className="habit-add" onClick={this.addCount}>
-          <FontAwesomeIcon icon={faPlusSquare}></FontAwesomeIcon>
-        </button>
-        <button className="habit-minus" onClick={this.minusCount}>
-          <FontAwesomeIcon icon={faMinusSquare}></FontAwesomeIcon>
-        </button>
-        <button className="habit-delete" onClick={this.deleteHabit}>
-          <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
-        </button>
-      </div>
+      <>
+        <div key="1" className="habit">
+          <span className="habit-title">Reading</span>
+          <span className="habit-count">{this.state.count}</span>
+          <button className="habit-add" onClick={this.addCount}>
+            <FontAwesomeIcon icon={faPlusSquare}></FontAwesomeIcon>
+          </button>
+          <button className="habit-minus" onClick={this.minusCount}>
+            <FontAwesomeIcon icon={faMinusSquare}></FontAwesomeIcon>
+          </button>
+          <button className="habit-delete" onClick={this.deleteHabit}>
+            <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
+          </button>
+        </div>
+      </>
     );
   }
 }
