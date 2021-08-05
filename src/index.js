@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import Habit from "./habit";
+import Habits from "./components/habits";
 import Header from "./components/header";
 
 ReactDOM.render(
   <React.StrictMode>
     <Header></Header>
-    <Habit></Habit>
+    <Habits></Habits>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );
