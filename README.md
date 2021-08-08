@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# concept
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+re-render the whole app on every update
 
-## Available Scripts
+virtual dom, re-render, components 
 
-In the project directory, you can run:
+<br><br>
 
-### `yarn start`
+# component
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Class
+- state. lifeCycle(default)
+React.Component ( class habit extends Component )
+React.PureComponent
 
-### `yarn test`
+### Function
+meno(function)
+React Hook (+ state, lifeCycle)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<br><br>
 
-### `yarn build`
+# perfomance
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+render함수 호출 시 ( 업데이트 되었을 떄 ) 전체 앱이 re-render된다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+이떄, VDOM이 변경사항을를 최소단위로 DOM에 올린다. (최소 요소만 업데이트됨)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+그렇기 떄문에 성능이 좋다.
 
-### `yarn eject`
+**DOM 전체가 깜빡 거릴 경우 잘못 작성하고 있는 것**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<br><br>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# 개발자 도구 react setting, 하이라이트 켜주기!
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<br><br>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+# pureComponent
 
-## Learn More
+render함수 호출 시 전체 앱이 re-render되지만
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+pureComponent를 extend할 경우, 해당 요소의 state가 shallow comparison: false를 반환하지 않는다면, re-render하지 않음
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+shallow comparison : 같은 객체를 참조하고 있다면 객체 내부의 값이 변해도 true를 반환 함
 
-### Code Splitting
+**console.log(this.state.originObject === callBackObject)**를 비교해서 false가 나와야 this.setState({originObject : callBackObject})가 적용됨
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+pureComponent를 사용해서 아래와 같이 작성할 수 있음
 
-### Analyzing the Bundle Size
+```js
+// habitAddForm.jsx
+import React, {PureComponent} from "react"
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+class HabitAddForm extends PureComponent {
+    // 리엑트에서 제공하는 create.Ref로 맴버 변수를 정의해주고, 연결된 요소의 value를 가져올 수 있음
+    formRef = React.createRef();
+    inputRef = React.createRef();
 
-### Making a Progressive Web App
+    onHabitAdd =(event)=> {
+        event.preventDefault();
+        const name = this.inputRef.current.value;
+        name && this.props.onAdd(name);
+        this.inputRef.current.value = '';
+        this.formRef.current.reset();
+        
+        // js에서는 이렇게 value를 받아옴
+        // const formEl = document.querySelector(".habitAddInput")
+        // this.props.onAdd(formEl.value)
+        // formEl.value = ""
+    }
+    render(){
+        return (
+        <>
+        <form ref={this.formRef} className="habitAddForm">
+            <input ref={this.inputRef} className="habitAddInput" type="text" placeholder="Add Habit" />
+            <input type="submit" onClick={this.onHabitAdd}></input>
+        </form>
+        </>
+        )
+    }
+}
+export default HabitAddForm
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+// app.jsx
+// havitAddFrom.jsx에서 onAdd()의 인자를 handleAdd에서 받음
+  handleAdd = name => {
+    const habits = [...this.state.habits, { id: Date.now(), name, count: 0 }];
+    this.setState({ habits });
+  };
+```
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# LifeCycle Method
 
-### Deployment
+아래와 같이 구현할 수 있고,
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Compoenent를 extend하면 사용할 수 있음
 
-### `yarn build` fails to minify
+soket통신, setTimeout, loading spiner같은 것들을 구현할 떄 사용할 수 있음
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```js
+componentDidMount(){
+ // something logic ...
+}
+componentWillUnmount(){
+ // something logic ...
+}
+componentDidUpdate(){
+ // something logic ...
+}
+```
+
+
+
+
