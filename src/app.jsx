@@ -1,52 +1,51 @@
-import React, { Component } from 'react';
+import React, { useCallback, useState } from 'react';
 import './app.css';
 import Habits from './components/habits';
 import Navbar from './components/navbar';
 
+const App = () => {
+  console.log("APP component")
+  const [state, setState] = useState({habits : [
+    { id: 1, name: 'Reading', count: 0 },
+    { id: 2, name: 'Running', count: 0 },
+    { id: 3, name: 'Coding', count: 0 },
+  ]})
+  const habits = state.habits
 
-class App extends Component {
-  state = {
-    habits: [
-      { id: 1, name: 'Reading', count: 0 },
-      { id: 2, name: 'Running', count: 0 },
-      { id: 3, name: 'Coding', count: 0 },
-    ],
-  };
-
-  handleIncrement = habit => {
-    const habits = [...this.state.habits].map((item)=> {
+  const handleIncrement = useCallback(habit => {
+    const HabitsAry = [...habits].map((item)=> {
       if(item.id !== habit.id){
         return item
       }else{
         return {id : item.id, name : item.name, count : item.count += 1}
       }
     })
-    this.setState({habits})
-  };
+    setState({habits : HabitsAry})
+  }, [])
 
-  handleDecrement = habit => {
-    const habits = [...this.state.habits].map((item)=> {
+  const handleDecrement = habit => {
+    const HabitsAry = [...habits].map((item)=> {
       if(item.id !== habit.id){
         return item
       }else{
         return {...item, count : item.count <= 0 ? 0 : item.count -= 1 }
       }
     })
-    this.setState({habits})
-  };
+    setState({habits : HabitsAry})
+  }
 
-  handleDelete = habit => {
-    const habits = this.state.habits.filter(item => item.id !== habit.id);
-    this.setState({ habits });
-  };
+  const handleDelete = habit => {
+    const HabitsAry = habits.filter(item => item.id !== habit.id);
+    setState({ habits : HabitsAry });
+  }
 
-  handleAdd = name => {
-    const habits = [...this.state.habits, { id: Date.now(), name, count: 0 }];
-    this.setState({ habits });
-  };
+  const handleAdd = name => {
+    const HabitsAry = [...habits, { id: Date.now(), name, count: 0 }];
+    setState({ habits : HabitsAry });
+  }
   
-  handleReset = () => {
-    const habits = [...this.state.habits].map((item)=> {
+  const handleReset = () => {
+    const HabitsAry = [...habits].map((item)=> {
       // 변경된 요소를 따로 리턴해야 그 요소만 변경됨
       if(item.count !== 0) {
         return {...item, count : 0}
@@ -54,25 +53,24 @@ class App extends Component {
         return item
       }
     })
-    this.setState({habits}) // this.state.something -> this.setState({something})
+    setState({habits : HabitsAry}) // this.state.something -> this.setState({something})
    }
-  render() {
-    return (
-      <>
-        <Navbar
-          totalCount={this.state.habits.filter(item => item.count > 0).length}
-        />
-        <Habits
-          habits={this.state.habits}
-          onIncrement={this.handleIncrement}
-          onDecrement={this.handleDecrement}
-          onDelete={this.handleDelete}
-          onReset={this.handleReset}
-          onAdd={this.handleAdd}
-        />
-      </>
-    );
-  }
+
+  return (
+    <>
+      <Navbar
+        totalCount={habits.filter(item => item.count > 0).length}
+      />
+      <Habits
+        habits={habits}
+        onIncrement={handleIncrement}
+        onDecrement={handleDecrement}
+        onDelete={handleDelete}
+        onReset={handleReset}
+        onAdd={handleAdd}
+      />
+    </>
+  );
 }
 
 export default App;

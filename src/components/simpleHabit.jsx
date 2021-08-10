@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 const SimpleHabit = () => {
     const [count, setCount] = useState(0);
     const spanRef = useRef();
-
+// 메모리에 함수를 올려 놓음(cache component), 함수 ref가 계속 변하는 사이드 이펙트를 막아줌
 const handleIncrement = useCallback(() => setCount(count + 1))
 
     // mount, undate시 호출 
